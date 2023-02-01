@@ -3,7 +3,7 @@
 // aws-sdk v2風記述
 // Cognitoの情報は.envに書いてください。
 // usage:
-// node signup.cjs
+// node signup.cjs  <username(=email)> <password>
 const AWS = require("aws-sdk");
 const dotenv = require("dotenv");
 
