@@ -22,6 +22,20 @@ function commonErr(err) {
   process.exit(1);
 }
 
+const signup = async () => {
+  const signUpParams = {
+    ClientId: process.env.CLIENT_ID,
+    Password: password,
+    UserAttributes: [
+      { Name: "email", Value: username },
+      { Name: "given_name", Value: "g" },
+      { Name: "family_name", Value: "f" },
+    ],
+    Username: username,
+  };
+  return cognitoIdp.send(new SignUpCommand(signUpParams));
+};
+
 cognitoIdp
   .send(new SignUpCommand(signUpParams))
   .catch(commonErr)
