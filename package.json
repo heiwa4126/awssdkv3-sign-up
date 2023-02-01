@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "aws-sdk": "^2.1306.0",
+    "@aws-sdk/client-cognito-identity-provider": "^3.262.0",
     "dotenv": "^16.0.3"
   }
 }
