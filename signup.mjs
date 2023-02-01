@@ -1,13 +1,16 @@
-#! /usr/bin/env node// Amazon Cognitoにユーザを追加して、メールアドレスを認証済みにするNode.jsのコード
+#! /usr/bin/env node
+// Amazon Cognitoにユーザを追加して、メールアドレスを認証済みにするNode.jsのコード
 // aws-sdk v3風でES6
 // Cognitoの情報は.envに書いてください。
 // usage:
 // node signup.mjs <username(=email)> <password>
+
 import {
   CognitoIdentityProviderClient,
   SignUpCommand,
   AdminUpdateUserAttributesCommand,
 } from "@aws-sdk/client-cognito-identity-provider";
+
 import { config } from "dotenv";
 
 config();
