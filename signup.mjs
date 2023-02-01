@@ -17,13 +17,8 @@ const cognitoIdp = new CognitoIdentityProviderClient({ region: process.env.REGIO
 const username = process.argv[2]; // usernameとemail兼用
 const password = process.argv[3];
 
-function commonErr(err) {
-  console.error("**ERROR**", err.message);
-  process.exit(1);
-}
-
-const signup = async () => {
-  const signUpParams = {
+async function signup() {
+  const param = {
     ClientId: process.env.CLIENT_ID,
     Password: password,
     UserAttributes: [
@@ -33,29 +28,33 @@ const signup = async () => {
     ],
     Username: username,
   };
-  return cognitoIdp.send(new SignUpCommand(signUpParams));
-};
+  return cognitoIdp.send(new SignUpCommand(param));
+}
 
-cognitoIdp
-  .send(new SignUpCommand(signUpParams))
-  .catch(commonErr)
-  .then((signUpData) => {
-    console.log(signUpData);
+async function updateAttr(signUpData) {
+  const param = {
+    UserAttributes: [
+      {
+        Name: "email_verified",
+        Value: "true",
+      },
+    ],
+    UserPoolId: process.env.USER_POOL_ID,
+    Username: username,
+  };
+  return cognitoIdp.send(new AdminUpdateUserAttributesCommand(param));
+}
 
-    const updateParams = {
-      UserAttributes: [
-        {
-          Name: "email_verified",
-          Value: "true",
-        },
-      ],
-      UserPoolId: process.env.USER_POOL_ID,
-      Username: username,
-    };
-    cognitoIdp
-      .send(new AdminUpdateUserAttributesCommand(updateParams))
-      .catch(commonErr)
-      .then((updateData) => {
-        console.log(updateData);
-      });
-  });
+async function main() {
+  try {
+    const signupData = await signup();
+    console.log(signupData);
+    const updateData = await updateAttr(signupData);
+    console.log(updateData);
+  } catch (e) {
+    console.error("**ERROR**", e.message);
+    process.exit(1);
+  }
+}
+
+main();
