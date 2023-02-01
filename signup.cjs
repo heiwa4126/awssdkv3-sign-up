@@ -4,12 +4,14 @@
 // Cognitoの情報は.envに書いてください。
 // usage:
 // node signup.cjs  <username(=email)> <password>
-const AWS = require("aws-sdk");
+const {
+  CognitoIdentityProvider: CognitoIdentityServiceProvider,
+} = require("@aws-sdk/client-cognito-identity-provider");
 const dotenv = require("dotenv");
 
 dotenv.config();
 
-const cognitoIdp = new AWS.CognitoIdentityServiceProvider({ region: process.env.REGION });
+const cognitoIdp = new CognitoIdentityServiceProvider({ region: process.env.REGION });
 
 const username = process.argv[2]; // usernameとemail兼用
 const password = process.argv[3];
@@ -39,7 +41,6 @@ cognitoIdp.signUp(signUpParams, (err, signUpData) => {
       ],
       UserPoolId: process.env.USER_POOL_ID,
       Username: username,
-      // Username: signUpData.UserSub
     };
     cognitoIdp.adminUpdateUserAttributes(updateParams, (updateError, updateData) => {
       if (updateError) {
