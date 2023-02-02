@@ -74,6 +74,10 @@ aws cognito-idp admin-update-user-attributes \
   --user-attributes '[{"Name": "email_verified", "Value": "true"}]'
 ```
 
+sign-up はアプリケーションクライアントIDが引数なのに、
+admin-update-user-attributes はプールIDが引数。
+
+
 ## 感想
 
 やっぱりNodejs入れて プロジェクト落として `npm i` は面倒。
