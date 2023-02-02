@@ -1,14 +1,29 @@
 # awssdkv3-sign-up
 
-AWS SDK for JavaScript v3 の練習。
+[AWS SDK for JavaScript v3](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/index.html)
+の練習。
 
 * username(=email)
 * password
 * given_name
 * family_name
 
-が必須のAmazon Cognitoにユーザを設定し、メールアドレスを承認済みにするスクリプト
+が必須の
+Amazon Cognitoユーザプールに
+ユーザを追加し、
+メールアドレスを承認済みにする
+スクリプト。
 
+
+## 前提
+
+* Node.js(v18)で作りました。
+* 適切な権限を持ったAWSアカウントが設定されてるものとする。
+
+
+## 動かし方
+
+プロジェクトルートで
 ```bash
 pnpm i
 # or
@@ -22,12 +37,12 @@ vim .env
 ```
 で環境設定して、
 
-
 ```bash
+# commonJS version
 node signup.cjs <username(=email)> <password>
-# or
+# or (ES6 version)
 node signup.mjs <username(=email)> <password>
-# or
+# or (TypeScript version)
 ts-node signup.ts <username(=email)> <password>
 ```
 で実行。
@@ -64,4 +79,5 @@ aws cognito-idp admin-update-user-attributes \
 やっぱりNodejs入れて プロジェクト落として `npm i` は面倒。
 あとでnpxできるようにする(またはGoかRustにする)。
 
-TypeScriptがanyだらけで気持ちが悪い。
+TypeScript版がanyだらけで気持ちが悪い。
+まあ作成中に補完が効くのはありがたい。
