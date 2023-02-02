@@ -1,25 +1,28 @@
 #! /usr/bin/env node
 // Amazon Cognitoにユーザを追加して、メールアドレスを認証済みにするNode.jsのコード
-// aws-sdk v3風でES6
+// aws-sdk v3でTypeScript(anyだらけでひどい。書くときに補完は効くけど)
 // Cognitoの情報は.envに書いてください。
 // usage:
-// node signup.mjs <username(=email)> <password>
+// ts-node signup.mjs <username(=email)> <password>
 
 import {
-  AdminUpdateUserAttributesCommand, CognitoIdentityProviderClient,
-  SignUpCommand
+  AdminUpdateUserAttributesCommand,
+  CognitoIdentityProviderClient,
+  SignUpCommand,
 } from "@aws-sdk/client-cognito-identity-provider";
 
 import { config } from "dotenv";
 
 config();
 
-const cognitoIdp = new CognitoIdentityProviderClient({ region: process.env.REGION });
+const cognitoIdp = new CognitoIdentityProviderClient({
+  region: process.env.REGION,
+});
 
 const username = process.argv[2]; // usernameとemail兼用
 const password = process.argv[3];
 
-async function signup() {
+async function signup(): Promise<any> {
   const param = {
     ClientId: process.env.CLIENT_ID,
     Password: password,
@@ -33,7 +36,7 @@ async function signup() {
   return cognitoIdp.send(new SignUpCommand(param));
 }
 
-async function updateAttr(signUpData) {
+async function updateAttr(signUpData: any): Promise<any> {
   const param = {
     UserAttributes: [
       {
@@ -53,7 +56,7 @@ async function main() {
     console.log(signupData);
     const updateData = await updateAttr(signupData);
     console.log(updateData);
-  } catch (e) {
+  } catch (e: any) {
     console.error("**ERROR**", e.message);
     process.exit(1);
   }
