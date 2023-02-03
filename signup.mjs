@@ -11,15 +11,17 @@ import { config } from "dotenv";
 
 config();
 
-const cognitoIdp = new CognitoIdentityProviderClient({ region: process.env.REGION });
-
 const username = process.argv[2]; // usernameとemail兼用
 const password = process.argv[3];
+const userPoolId = process.env.USER_POOL_ID;
+const clientId = process.env.CLIENT_ID;
 
 async function main() {
+  const cognitoIdp = new CognitoIdentityProviderClient({ region: process.env.REGION });
+
   try {
     const signupData = await cognitoIdp.send(new SignUpCommand({
-      ClientId: process.env.CLIENT_ID,
+      ClientId: clientId,
       Password: password,
       UserAttributes: [
         { Name: "email", Value: username },
@@ -37,13 +39,13 @@ async function main() {
           Value: "true",
         },
       ],
-      UserPoolId: process.env.USER_POOL_ID,
+      UserPoolId: userPoolId,
       Username: username,
     }));
     console.log(updateData);
 
     const confirmData = await cognitoIdp.send(new AdminConfirmSignUpCommand({
-      UserPoolId: process.env.USER_POOL_ID,
+      UserPoolId: userPoolId,
       Username: username
     }));
     console.log(confirmData);

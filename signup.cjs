@@ -3,51 +3,55 @@
 // aws-sdk v2風記述
 // Cognitoの情報は.envに書いてください。
 // usage:
-// node signup.cjs  <username(=email)> <password>
-const {
-  CognitoIdentityProvider: CognitoIdentityServiceProvider,
-} = require("@aws-sdk/client-cognito-identity-provider");
+// node signup.cjs <username(=email)> <password>
+
+const { CognitoIdentityProvider } = require("@aws-sdk/client-cognito-identity-provider");
 const dotenv = require("dotenv");
 
 dotenv.config();
 
-const cognitoIdp = new CognitoIdentityServiceProvider({ region: process.env.REGION });
-
 const username = process.argv[2]; // usernameとemail兼用
 const password = process.argv[3];
+const userPoolId = process.env.USER_POOL_ID;
+const clientId = process.env.CLIENT_ID;
 
-const signUpParams = {
-  ClientId: process.env.CLIENT_ID,
-  Password: password,
-  UserAttributes: [
-    { Name: "email", Value: username },
-    { Name: "given_name", Value: "g" },
-    { Name: "family_name", Value: "f" },
-  ],
-  Username: username,
-};
-
-cognitoIdp.signUp(signUpParams, (err, signUpData) => {
-  if (err) {
-    console.error(err, err.stack);
-  } else {
+async function main() {
+  const cognitoIdp = new CognitoIdentityProvider({ region: process.env.REGION });
+  try {
+    const signUpData = await cognitoIdp.signUp({
+      ClientId: clientId,
+      Password: password,
+      UserAttributes: [
+        { Name: "email", Value: username },
+        { Name: "given_name", Value: "g" },
+        { Name: "family_name", Value: "f" },
+      ],
+      Username: username,
+    });
     console.log(signUpData);
-    const updateParams = {
+
+    const updateData = await cognitoIdp.adminUpdateUserAttributes({
       UserAttributes: [
         {
           Name: "email_verified",
           Value: "true",
         },
       ],
-      UserPoolId: process.env.USER_POOL_ID,
+      UserPoolId: userPoolId,
       Username: username,
-    };
-    cognitoIdp.adminUpdateUserAttributes(updateParams, (updateError, updateData) => {
-      if (updateError) {
-        console.error(updateError, updateError.stack);
-      } else {
-        console.log(updateData);
-      }
     });
+    console.log(updateData);
+
+    const confirmData = await cognitoIdp.adminConfirmSignUp({
+      UserPoolId: userPoolId,
+      Username: username,
+    });
+    console.log(confirmData);
+
+  } catch (e) {
+    console.error("**ERROR**", e.message);
+    process.exit(1);
   }
-});
+}
+
+main();
