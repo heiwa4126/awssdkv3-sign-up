@@ -14,9 +14,10 @@ const username = process.argv[2]; // usernameとemail兼用
 const password = process.argv[3];
 const userPoolId = process.env.USER_POOL_ID;
 const clientId = process.env.CLIENT_ID;
+const region = process.env.REGION;
 
 async function main() {
-  const cognitoIdp = new CognitoIdentityProvider({ region: process.env.REGION });
+  const cognitoIdp = new CognitoIdentityProvider({ region });
   try {
     const signUpData = await cognitoIdp.signUp({
       ClientId: clientId,

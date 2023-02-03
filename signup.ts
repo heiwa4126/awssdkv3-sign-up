@@ -1,11 +1,12 @@
 #! /usr/bin/env node
 // Amazon Cognitoにユーザを追加して、メールアドレスを認証済みにするNode.jsのコード
-// aws-sdk v3でTypeScript(anyだらけでひどい。書くときに補完は効くけど)
+// aws-sdk v3でTypeScript。ES6版と同じにしか見えない(catchにanyがあるだけ)
 // Cognitoの情報は.envに書いてください。
 // usage:
-// ts-node signup.mjs <username(=email)> <password>
+// ts-node signup.ts <username(=email)> <password>
 
 import {
+  AdminConfirmSignUpCommand,
   AdminUpdateUserAttributesCommand,
   CognitoIdentityProviderClient,
   SignUpCommand,
@@ -15,47 +16,51 @@ import { config } from "dotenv";
 
 config();
 
-const cognitoIdp = new CognitoIdentityProviderClient({
-  region: process.env.REGION,
-});
-
 const username = process.argv[2]; // usernameとemail兼用
 const password = process.argv[3];
-
-async function signup(): Promise<any> {
-  const param = {
-    ClientId: process.env.CLIENT_ID,
-    Password: password,
-    UserAttributes: [
-      { Name: "email", Value: username },
-      { Name: "given_name", Value: "g" },
-      { Name: "family_name", Value: "f" },
-    ],
-    Username: username,
-  };
-  return cognitoIdp.send(new SignUpCommand(param));
-}
-
-async function updateAttr(signUpData: any): Promise<any> {
-  const param = {
-    UserAttributes: [
-      {
-        Name: "email_verified",
-        Value: "true",
-      },
-    ],
-    UserPoolId: process.env.USER_POOL_ID,
-    Username: username,
-  };
-  return cognitoIdp.send(new AdminUpdateUserAttributesCommand(param));
-}
+const userPoolId = process.env.USER_POOL_ID;
+const clientId = process.env.CLIENT_ID;
+const region = process.env.REGION;
 
 async function main() {
+  const cognitoIdp = new CognitoIdentityProviderClient({ region });
+
   try {
-    const signupData = await signup();
+    const signupData = await cognitoIdp.send(
+      new SignUpCommand({
+        ClientId: clientId,
+        Password: password,
+        UserAttributes: [
+          { Name: "email", Value: username },
+          { Name: "given_name", Value: "g" },
+          { Name: "family_name", Value: "f" },
+        ],
+        Username: username,
+      })
+    );
     console.log(signupData);
-    const updateData = await updateAttr(signupData);
+
+    const updateData = await cognitoIdp.send(
+      new AdminUpdateUserAttributesCommand({
+        UserAttributes: [
+          {
+            Name: "email_verified",
+            Value: "true",
+          },
+        ],
+        UserPoolId: userPoolId,
+        Username: username,
+      })
+    );
     console.log(updateData);
+
+    const confirmData = await cognitoIdp.send(
+      new AdminConfirmSignUpCommand({
+        UserPoolId: userPoolId,
+        Username: username,
+      })
+    );
+    console.log(confirmData);
   } catch (e: any) {
     console.error("**ERROR**", e.message);
     process.exit(1);
