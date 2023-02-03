@@ -74,8 +74,15 @@ aws cognito-idp admin-update-user-attributes \
   --user-attributes '[{"Name": "email_verified", "Value": "true"}]'
 ```
 
+さらに
+```bash
+aws cognito-idp admin-confirm-sign-up
+  --user-pool-id <user-pool-id> \
+  --username <username>
+```
+
 sign-up はアプリケーションクライアントIDが引数なのに、
-admin-update-user-attributes はプールIDが引数。
+admin-update-user-attributes, admin-confirm-sign-up はプールIDが引数。
 
 
 ## 感想
