@@ -3,27 +3,26 @@
 [AWS SDK for JavaScript v3](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/index.html)
 の練習。
 
-* username(=email)
-* password
-* given_name
-* family_name
+- username(=email)
+- password
+- given_name
+- family_name
 
 が必須の
-Amazon Cognitoユーザプールに
+Amazon Cognito ユーザプールに
 ユーザを追加し、
 メールアドレスを承認済みにする
 スクリプト。
 
-
 ## 前提
 
-* Node.js(v18)で作りました。
-* 適切な権限を持ったAWSアカウントが設定されてるものとする。
-
+- Node.js(v18)で作りました。
+- 適切な権限を持った AWS アカウントが設定されてるものとする。
 
 ## 動かし方
 
 プロジェクトルートで
+
 ```bash
 pnpm i
 # or
@@ -31,10 +30,12 @@ npm i
 ```
 
 した後
+
 ```bash
 cp .env.example .env
 vim .env
 ```
+
 で環境設定して、
 
 ```bash
@@ -45,11 +46,11 @@ node signup.mjs <username(=email)> <password>
 # or (TypeScript version)
 ts-node signup.ts <username(=email)> <password>
 ```
+
 で実行。
 
 - メール(=ユーザ名)は実在していなくてもいい(`aaa@example.com`など。`@`は要る)
-- passwordはポリシーに従ったもの(「数字を含む」とかのアレ)を渡すこと。
-
+- password はポリシーに従ったもの(「数字を含む」とかのアレ)を渡すこと。
 
 ## shell版
 
@@ -63,9 +64,10 @@ aws cognito-idp sign-up \
   --user-attributes '[{"Name": "email", "Value": "<email-address>"}]' \
   --user-pool-id <user-pool-id>
 ```
-(user-attributesはCognitoユーザープールの必須項目にあわせて追加)
 
-これだとメールが「認証済み」にならない(email_verifiedがいっぺんに設定できない)ので、
+(user-attributes は Cognito ユーザープールの必須項目にあわせて追加)
+
+これだとメールが「認証済み」にならない(email_verified がいっぺんに設定できない)ので、
 
 ```bash
 aws cognito-idp admin-update-user-attributes \
@@ -75,20 +77,20 @@ aws cognito-idp admin-update-user-attributes \
 ```
 
 さらに
+
 ```bash
 aws cognito-idp admin-confirm-sign-up
   --user-pool-id <user-pool-id> \
   --username <username>
 ```
 
-sign-up はアプリケーションクライアントIDが引数なのに、
-admin-update-user-attributes, admin-confirm-sign-up はプールIDが引数。
-
+sign-up はアプリケーションクライアント ID が引数なのに、
+admin-update-user-attributes, admin-confirm-sign-up はプール ID が引数。
 
 ## 感想
 
-やっぱりNodejs入れて プロジェクト落として `npm i` は面倒。
-あとでnpxできるようにする(またはGoかRustにする)。
+やっぱり Nodejs 入れてプロジェクト落として `npm i` は面倒。
+あとで npx できるようにする(または Go か Rust にする)。
 
-TypeScript版がanyだらけで気持ちが悪い。
+TypeScript 版が any だらけで気持ちが悪い。
 まあ作成中に補完が効くのはありがたい。

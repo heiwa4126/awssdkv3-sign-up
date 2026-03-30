@@ -17,42 +17,41 @@ const clientId = process.env.CLIENT_ID;
 const region = process.env.REGION;
 
 async function main() {
-  const cognitoIdp = new CognitoIdentityProvider({ region });
-  try {
-    const signUpData = await cognitoIdp.signUp({
-      ClientId: clientId,
-      Password: password,
-      UserAttributes: [
-        { Name: "email", Value: username },
-        { Name: "given_name", Value: "g" },
-        { Name: "family_name", Value: "f" },
-      ],
-      Username: username,
-    });
-    console.log(signUpData);
+	const cognitoIdp = new CognitoIdentityProvider({ region });
+	try {
+		const signUpData = await cognitoIdp.signUp({
+			ClientId: clientId,
+			Password: password,
+			UserAttributes: [
+				{ Name: "email", Value: username },
+				{ Name: "given_name", Value: "g" },
+				{ Name: "family_name", Value: "f" },
+			],
+			Username: username,
+		});
+		console.log(signUpData);
 
-    const updateData = await cognitoIdp.adminUpdateUserAttributes({
-      UserAttributes: [
-        {
-          Name: "email_verified",
-          Value: "true",
-        },
-      ],
-      UserPoolId: userPoolId,
-      Username: username,
-    });
-    console.log(updateData);
+		const updateData = await cognitoIdp.adminUpdateUserAttributes({
+			UserAttributes: [
+				{
+					Name: "email_verified",
+					Value: "true",
+				},
+			],
+			UserPoolId: userPoolId,
+			Username: username,
+		});
+		console.log(updateData);
 
-    const confirmData = await cognitoIdp.adminConfirmSignUp({
-      UserPoolId: userPoolId,
-      Username: username,
-    });
-    console.log(confirmData);
-
-  } catch (e) {
-    console.error("**ERROR**", e.message);
-    process.exit(1);
-  }
+		const confirmData = await cognitoIdp.adminConfirmSignUp({
+			UserPoolId: userPoolId,
+			Username: username,
+		});
+		console.log(confirmData);
+	} catch (e) {
+		console.error("**ERROR**", e.message);
+		process.exit(1);
+	}
 }
 
 main();

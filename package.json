@@ -1,21 +1,25 @@
 {
-  "name": "sign-up",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@aws-sdk/client-cognito-identity-provider": "^3.996.0",
-    "dotenv": "^17.3.1"
-  },
-  "devDependencies": {
-    "@types/node": "^25.3.0",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.9.3"
-  }
+	"name": "sign-up",
+	"version": "1.0.0",
+	"description": "",
+	"keywords": [],
+	"license": "ISC",
+	"author": "",
+	"main": "index.js",
+	"scripts": {
+		"preinstall": "pnpm audit",
+		"format": "oxfmt",
+		"lint": "oxlint",
+		"check": "oxfmt && oxlint --fix",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"dependencies": {
+		"@aws-sdk/client-cognito-identity-provider": "^3.1019.0",
+		"dotenv": "^17.3.1"
+	},
+	"devDependencies": {
+		"@types/node": "^25.5.0",
+		"ts-node": "^10.9.2",
+		"typescript": "^6.0.2"
+	}
 }
